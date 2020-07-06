@@ -23,8 +23,16 @@ export default class AccountProfile extends React.Component {
         super(props)
 
         this.state = {
+            isloaded:false,
             profileData: {
-                address: {},
+                 address: {
+                    number: '',
+                    street: '',
+                    suburb: '',
+                    postcode: '',
+                    country: '',
+                    city:''
+                },
                 nationality: '',
                 education: [],
                 languages: [],
@@ -34,6 +42,9 @@ export default class AccountProfile extends React.Component {
                 visaStatus: '',
                 visaExpiryDate: '',
                 profilePhoto: '',
+                profilePhotoUrl: '',
+                summary: '',
+                description: '',
                 linkedAccounts: {
                     linkedIn: "",
                     github: ""
@@ -76,25 +87,43 @@ export default class AccountProfile extends React.Component {
             },
             type: "GET",
             success: function (res) {
-                this.updateWithoutSave(res.data)
-            }.bind(this)
+                let newValues= null;
+                if (res.data) {
+                   // console.log("resData", res.data);
+                    this.updateWithoutSave(res.data)
+                   // console.log("State Data",this.state.profileData);
+                    this.setState({isloaded:true});
+                    
+                }
+            }.bind(this),
+            error: function (res) {
+                reject(error)
+            }
         })
+        
         this.init()
     }
-    //updates component's state without saving data
+
     updateWithoutSave(newValues) {
+        console.log("updateWithoutSave",newValues);
         let newProfile = Object.assign({}, this.state.profileData, newValues)
         this.setState({
             profileData: newProfile
         })
+        console.log("updateWithoutSave AFTER:");
     }
 
-    //updates component's state and saves data
+ 
     updateAndSaveData(newValues) {
+        
         let newProfile = Object.assign({}, this.state.profileData, newValues)
+        console.log("updateandSave Before:");
+        console.log(newProfile);
         this.setState({
             profileData: newProfile
         }, this.saveProfile)
+        console.log("updateandSave after:");
+        console.log(this.state.profileData);
     }
 
     updateForComponentId(componentId, newValues) {
@@ -102,6 +131,8 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
+        console.log("Save Profile");
+        console.log(JSON.stringify(this.state.profileData))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
             url: 'http://localhost:60290/profile/profile/updateTalentProfile',
@@ -129,171 +160,165 @@ export default class AccountProfile extends React.Component {
     }
 
     render() {
-        const profile = {
-            firstName: this.state.profileData.firstName,
-            lastName: this.state.profileData.lastName,
-            email: this.state.profileData.email,
-            phone: this.state.profileData.phone
-        }
-        return (
-            <BodyWrapper reload={this.loadData} loaderData={this.state.loaderData}>
-                <section className="page-body">
+         const profile = {
+             firstName: this.state.profileData.firstName,
+             lastName: this.state.profileData.lastName,
+             email: this.state.profileData.email,
+             phone: this.state.profileData.phone
+         }
+
+console.log("Is loaded flag before if",this.state.isloaded);
+console.log('Current status',this.state.profileData.jobSeekingStatus);
+   if(this.state.isloaded)   
+   {
+   return(
+        
+      
+        <BodyWrapper reload={this.loadData} loaderData={this.state.loaderData}>  
+        <section className="page-body">
+             <div className="ui container">
                     <div className="ui container">
-                        <div className="ui container">
-                            <div className="profile">
-                                <form className="ui form">
-                                    <div className="ui grid">
-                                        <FormItemWrapper
-                                            title='Linked Accounts'
-                                            tooltip='Linking to online social networks adds credibility to your profile'
-                                        >
-                                            <SocialMediaLinkedAccount
-                                                linkedAccounts={this.state.profileData.linkedAccounts}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='User Details'
-                                            tooltip='Enter your contact details'
-                                        >
-                                            <IndividualDetailSection
+                        <div className="profile">
+                            <form className="ui form">
+                                <div className="ui grid">
+                                           <FormItemWrapper
+                                                 title='Linked Accounts'
+                                                 tooltip='Linking to online social networks adds credibility to your profile'
+                                                 >
+                                                 <SocialMediaLinkedAccount
+                                                  linkedAccounts={this.state.profileData.linkedAccounts}
+                                                  updateProfileData={this.updateWithoutSave}
+                                                  saveProfileData={this.updateAndSaveData}
+                                                  />
+                                            </FormItemWrapper>
+
+                                            
+                                             <FormItemWrapper
+                                                 title='Description'>  
+                                              <SelfIntroduction 
+                                            summary={this.state.profileData.summary}
+                                            description={this.state.profileData.description}
+                                            updateProfileData={this.updateAndSaveData}
+                                            updateWithoutSave={this.updateWithoutSave} />                               
+                                            </FormItemWrapper>
+                                           
+
+                                            <FormItemWrapper
+                                                 title='User Details'
+                                                 tooltip='Enter your contact details'>
+                                               <IndividualDetailSection
                                                 controlFunc={this.updateForComponentId}
                                                 details={profile}
-                                                componentId='contactDetails'
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Address'
-                                            tooltip='Enter your current address'>
-                                            <Address
+                                                componentId='contactDetails'/> 
+                                            </FormItemWrapper>
+
+                                            <FormItemWrapper
+                                                 title='Address'
+                                                 tooltip='Enter your current address'>
+                                                 <Address
                                                 addressData={this.state.profileData.address}
                                                 updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateAndSaveData}
+                                                controlFunc={this.updateForComponentId}
+                                                componentId='addressDetails'
                                             />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Nationality'
-                                            tooltip='Select your nationality'
-                                        >
-                                            <Nationality
+                                            </FormItemWrapper>
+
+                                            <FormItemWrapper
+                                                 title='Nationality'
+                                                 tooltip='Select your nationality'>   
+                                                <Nationality
                                                 nationalityData={this.state.profileData.nationality}
                                                 saveProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Languages'
-                                            tooltip='Select languages that you speak'
-                                        >
-                                            <Language
+                                            />                                     
+                                            </FormItemWrapper>
+
+                                            <FormItemWrapper
+                                                 title='Languages'
+                                                 tooltip='Select languages that you speak'>
+                                                <Language
                                                 languageData={this.state.profileData.languages}
                                                 updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Skills'
-                                            tooltip='List your skills'
-                                        >
-                                            <Skill
-                                                skillData={this.state.profileData.skills}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Work experience'
-                                            tooltip='Add your work experience'
-                                        >
-                                            <Experience
-                                                experienceData={this.state.profileData.experience}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Education'
-                                            tooltip='Add your educational background'
-                                        >
-                                            <Education
-                                                educationData={this.state.profileData.education}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Certification'
-                                            tooltip='List your certificates, honors and awards'
-                                        >
-                                            <Certificate
-                                                certificateData={this.state.profileData.certifications}
-                                                updateProfileData={this.updateAndSaveData}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Visa Status'
-                                            tooltip='What is your current Visa/Citizenship status?'
-                                        >
-                                            <VisaStatus
+                                            />   
+                                            </FormItemWrapper>
+
+
+                                           <FormItemWrapper
+                                                title='Visa Status'
+                                                tooltip='What is your current Visa/Citizenship status?'>
+                                               <VisaStatus
                                                 visaStatus={this.state.profileData.visaStatus}
                                                 visaExpiryDate={this.state.profileData.visaExpiryDate}
                                                 updateProfileData={this.updateWithoutSave}
                                                 saveProfileData={this.updateAndSaveData}
                                             />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Status'
-                                            tooltip='What is your current status in jobseeking?'
-                                        >
-                                            <TalentStatus
-                                                status={this.state.profileData.jobSeekingStatus}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveProfileData={this.updateAndSaveData}
+                                            </FormItemWrapper>
+
+                                           
+
+                                            <FormItemWrapper
+                                                title='Skills'
+                                                tooltip='List your skills'>
+                                                   
+                                                   <Skill
+                                                skillData={this.state.profileData.skills}
+                                                updateProfileData={this.updateAndSaveData}
                                             />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Profile Photo'
-                                            tooltip='Please upload your profile photo'
-                                            hideSegment={true}
-                                        >
-                                            <PhotoUpload
+                                            </FormItemWrapper>
+                                        
+                                            <FormItemWrapper
+                                                title='Work experience'
+                                                tooltip='Add your work experience'>
+                                                   
+                                                   <Experience
+                                                experienceData={this.state.profileData.experience}
+                                                updateProfileData={this.updateAndSaveData}
+                                            />
+                                            </FormItemWrapper>
+                                            
+                                           <FormItemWrapper
+                                                title='Status'
+                                                tooltip='What is your current status in jobseeking?'>
+                                                    <TalentStatus
+                                                    status={this.state.profileData.jobSeekingStatus}
+                                                    updateProfileData={this.updateWithoutSave}
+                                                    saveProfileData={this.updateAndSaveData}
+                                                    />
+                                           </FormItemWrapper>
+
+                                          <FormItemWrapper
+                                                title='Profile Photo'
+                                                tooltip='Please upload your profile photo'>  
+                                                
+                                                <PhotoUpload
                                                 imageId={this.state.profileData.profilePhotoUrl}
                                                 updateProfileData={this.updateWithoutSave}
                                                 savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
                                             />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='Profile Video'
-                                            tooltip='Upload a brief self-introduction video'
-                                            hideSegment={true}
-                                        >
-                                            <VideoUpload
-                                                videoName={this.state.profileData.videoName}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveVideoUrl={'http://localhost:60290/profile/profile/updateTalentVideo'}
-                                            />
-                                        </FormItemWrapper>
-                                        <FormItemWrapper
-                                            title='CV'
-                                            tooltip='Upload your CV. Accepted files are pdf, doc & docx)'
-                                            hideSegment={true}
-                                        >
-                                            <CVUpload
-                                                cvName={this.state.profileData.cvName}
-                                                cvUrl={this.state.profileData.cvUrl}
-                                                updateProfileData={this.updateWithoutSave}
-                                                saveCVUrl={'http://localhost:60290/profile/profile/updateTalentCV'}
-                                            />
-                                        </FormItemWrapper>
-                                        <SelfIntroduction
-                                            summary={this.state.profileData.summary}
-                                            description={this.state.profileData.description}
-                                            updateProfileData={this.updateAndSaveData}
-                                            updateWithoutSave={this.updateWithoutSave}
-                                        />
-                                    </div>
-                                </form>
-                            </div >
+                                                  
+                                         </FormItemWrapper>
+                                            
+                                        
+
+
+
+                                 </div>
+                            </form>
                         </div>
-                    </div>
-                </section>
-            </BodyWrapper>
-        )
+                    </div>  
+              </div>
+        </section>
+        </BodyWrapper>  
+        
+          
+      )
+   }
+   else{
+       return(
+       
+           <div><h1>Loading...</h1></div>
+       )
+   }
+
     }
 }

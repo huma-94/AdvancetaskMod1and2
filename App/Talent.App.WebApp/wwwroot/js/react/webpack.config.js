@@ -1,5 +1,4 @@
-﻿
-module.exports = {
+﻿module.exports = {
     context: __dirname,
     entry: {
         homePage: './ReactScripts/Home.js'

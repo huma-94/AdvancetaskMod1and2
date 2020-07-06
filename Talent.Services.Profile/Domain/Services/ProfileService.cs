@@ -52,13 +52,117 @@ namespace Talent.Services.Profile.Domain.Services
         public async Task<TalentProfileViewModel> GetTalentProfile(string Id)
         {
             //Your code here;
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            User profile = null;
+            profile = (await _userRepository.GetByIdAsync(Id));
+
+            if (profile != null)
+            {
+
+                var languages = profile.Languages.Select(x => ViewModelFromLanguage(x)).ToList();
+                var skills = profile.Skills.Select(x => ViewModelFromSkill(x)).ToList();
+                var experience = profile.Experience.Select(x => ViewModelFromExperience(x)).ToList();
+
+                var result = new TalentProfileViewModel
+                {
+                    Id = profile.Id,
+                    FirstName = profile.FirstName,
+                    MiddleName = profile.MiddleName,
+                    LastName = profile.LastName,
+                    Gender = profile.Gender,
+
+                    Email = profile.Email,
+
+                    Phone = profile.Phone,
+                    MobilePhone = profile.MobilePhone,
+                    IsMobilePhoneVerified = profile.IsMobilePhoneVerified,
+
+                    //Address = profile.Address,
+                    Address = profile.Address,
+                    Nationality = profile.Nationality,
+                    VisaStatus = profile.VisaStatus,
+                    VisaExpiryDate = profile.VisaExpiryDate,
+                    ProfilePhoto = profile.ProfilePhoto,
+                    ProfilePhotoUrl = profile.ProfilePhotoUrl,
+
+                    Summary = profile.Summary,
+                    Description = profile.Description,
+                    LinkedAccounts = profile.LinkedAccounts,
+                    JobSeekingStatus = profile.JobSeekingStatus,
+
+                    Languages = languages,
+                    Skills = skills,
+                    Experience = experience,
+                };
+
+                return result;
+            }
+
+            return null;
         }
 
         public async Task<bool> UpdateTalentProfile(TalentProfileViewModel model, string updaterId)
         {
             //Your code here;
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+
+            try
+            {
+                if (model.Id != null)
+                {
+                    User existingEmployer = (await _userRepository.GetByIdAsync(model.Id));
+                    existingEmployer.FirstName = model.FirstName;
+                    existingEmployer.MiddleName = model.MiddleName;
+                    existingEmployer.LastName = model.LastName;
+                    existingEmployer.Gender = model.Gender;
+                    existingEmployer.Email = model.Email;
+
+                    existingEmployer.Phone = model.Phone;
+                    //existingEmployer.MobilePhone = model.MobilePhone;
+                    existingEmployer.Address = model.Address;
+                    existingEmployer.Nationality = model.Nationality;
+                    existingEmployer.LinkedAccounts = model.LinkedAccounts;
+                    existingEmployer.VisaStatus = model.VisaStatus;
+                    existingEmployer.VisaExpiryDate = model.VisaExpiryDate;
+
+                    existingEmployer.JobSeekingStatus = model.JobSeekingStatus;
+
+                    existingEmployer.Summary = model.Summary;
+                    existingEmployer.Description = model.Description;
+
+                    existingEmployer.ProfilePhoto = model.ProfilePhoto;
+                    existingEmployer.ProfilePhotoUrl = model.ProfilePhotoUrl;
+
+                    //var newLanguages = new List<UserLanguage>();
+                    //foreach (var item in model.Languages)
+                    //{
+                    //    var language = existingEmployer.Languages.SingleOrDefault(x => x.Id == item.Id);
+                    //    if (language == null)
+                    //    {
+                    //        language = new UserLanguage
+                    //        {
+                    //            Id = ObjectId.GenerateNewId().ToString(),
+                    //            IsDeleted = false
+                    //        };
+                    //    }
+                    //    UpdateLanguageFromView(item, language);
+                    //    newLanguages.Add(language);
+                    //}
+                    //existingEmployer.Languages = newLanguages;
+
+                    existingEmployer.UpdatedBy = updaterId;
+
+                    await _userRepository.Update(existingEmployer);
+
+                    return true;
+                }
+                return false;
+            }
+            catch (MongoException e)
+            {
+                return false;
+            }
         }
 
         public async Task<EmployerProfileViewModel> GetEmployerProfile(string Id, string role)
@@ -79,13 +183,13 @@ namespace Talent.Services.Profile.Domain.Services
 
             if (profile != null)
             {
-                videoUrl = string.IsNullOrWhiteSpace(profile.VideoName)
+                        videoUrl = string.IsNullOrWhiteSpace(profile.VideoName)
                           ? ""
                           : await _fileService.GetFileURL(profile.VideoName, FileType.UserVideo);
-
+                    
                 var skills = profile.Skills.Select(x => ViewModelFromSkill(x)).ToList();
 
-                var result = new EmployerProfileViewModel
+                  var result = new EmployerProfileViewModel
                 {
                     Id = profile.Id,
                     CompanyContact = profile.CompanyContact,
@@ -228,9 +332,43 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<bool> UpdateTalentPhoto(string talentId, IFormFile file)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            var fileExtension = Path.GetExtension(file.FileName);
+            List<string> acceptedExtensions = new List<string> { ".jpg", ".png", ".gif", ".jpeg" };
+
+            if (fileExtension != null && !acceptedExtensions.Contains(fileExtension.ToLower()))
+            {
+                return false;
+            }
+
+            var profile = (await _userRepository.Get(x => x.Id == talentId)).SingleOrDefault();
+
+            if (profile == null)
+            {
+                return false;
+            }
+
+            var newFileName = await _fileService.SaveFile(file, FileType.ProfilePhoto);
+
+            if (!string.IsNullOrWhiteSpace(newFileName))
+            {
+                var oldFileName = profile.ProfilePhoto;
+
+                if (!string.IsNullOrWhiteSpace(oldFileName))
+                {
+                    await _fileService.DeleteFile(oldFileName, FileType.ProfilePhoto);
+                }
+
+                profile.ProfilePhoto = newFileName;
+                profile.ProfilePhotoUrl = await _fileService.GetFileURL(newFileName, FileType.ProfilePhoto);
+
+                await _userRepository.Update(profile);
+                return true;
+            }
+
+            return false;
+
         }
+    
 
         public async Task<bool> AddTalentVideo(string talentId, IFormFile file)
         {
@@ -259,8 +397,41 @@ namespace Talent.Services.Profile.Domain.Services
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(string employerOrJobId, bool forJob, int position, int increment)
         {
-            //Your code here;
-            throw new NotImplementedException();
+            IQueryable<User> users = _userRepository.Collection.Skip(position * increment).Take(increment);
+
+            var returnTalents = new List<TalentSnapshotViewModel>();
+            foreach (var user in users)
+            {
+                var skills = user.Skills.Select(x => ViewModelFromSkill(x).Name).ToList();
+                var currentEmployment = GetCurrentExperience(user.Experience);
+
+                var talent = new TalentSnapshotViewModel
+                {
+                    Id = user.Id,
+                    Name = user.FirstName + " " + user.LastName,
+                    PhotoId = user.ProfilePhotoUrl,
+                    VideoUrl = user.VideoName,
+                    CVUrl = user.CvName,
+                    Summary = user.Summary,
+                    Level = user.JobSeekingStatus?.Status,
+                    CurrentEmployment = currentEmployment,
+                    Skills = skills
+                };
+                returnTalents.Add(talent);
+            }
+            return returnTalents;
+
+        }
+        protected string GetCurrentExperience(List<UserExperience> experiences)
+        {
+            string currentEmployment = null;
+            if (experiences.Count > 0)
+            {
+                var lastExperience = ViewModelFromExperience(experiences[experiences.Count - 1]);
+                if (lastExperience.End >= DateTime.Now)
+                    currentEmployment = lastExperience.Company + "," + lastExperience.Position;
+            }
+            return currentEmployment;
         }
 
         public async Task<IEnumerable<TalentSnapshotViewModel>> GetTalentSnapshotList(IEnumerable<string> ids)
@@ -319,6 +490,12 @@ namespace Talent.Services.Profile.Domain.Services
             original.Skill = model.Name;
         }
 
+        protected void UpdateLanguageFromView(AddLanguageViewModel model, UserLanguage original)
+        {
+            original.LanguageLevel = model.Level;
+            original.Language = model.Name;
+        }
+
         #endregion
 
         #region Build Views from Model
@@ -330,6 +507,29 @@ namespace Talent.Services.Profile.Domain.Services
                 Id = skill.Id,
                 Level = skill.ExperienceLevel,
                 Name = skill.Skill
+            };
+        }
+
+        protected AddLanguageViewModel ViewModelFromLanguage(UserLanguage language)
+        {
+            return new AddLanguageViewModel
+            {
+                Id = language.Id,
+                Level = language.LanguageLevel,
+                Name = language.Language
+            };
+        }
+
+        protected ExperienceViewModel ViewModelFromExperience(UserExperience experience)
+        {
+            return new ExperienceViewModel
+            {
+                Id = experience.Id,
+                Company = experience.Company,
+                Position = experience.Position,
+                Responsibilities = experience.Responsibilities,
+                Start = experience.Start,
+                End = experience.End,
             };
         }
 
@@ -350,7 +550,7 @@ namespace Talent.Services.Profile.Domain.Services
             //Your code here;
             throw new NotImplementedException();
         }
-         
+
         public async Task<int> GetTotalTalentsForClient(string clientId, string recruiterId)
         {
             //Your code here;

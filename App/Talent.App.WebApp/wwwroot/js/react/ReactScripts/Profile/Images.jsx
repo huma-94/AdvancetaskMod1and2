@@ -154,7 +154,7 @@ export class Images extends React.Component {
                 }
             }.bind(this),
             error: function (res, status, error) {
-                //Display error
+        
                 TalentUtil.notification.show("There is an error when updating Images - " + error, "error", null, null);
             }
         });
