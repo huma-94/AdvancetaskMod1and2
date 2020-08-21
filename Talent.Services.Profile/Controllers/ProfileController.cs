@@ -448,6 +448,7 @@ namespace Talent.Services.Profile.Controllers
             }
             return Json(new { Success = returnValue });
         }
+
         [HttpPost("updateTalentCV")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> UpdateTalentCV()

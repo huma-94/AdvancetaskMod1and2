@@ -80,7 +80,7 @@ export default class AccountProfile extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getTalentProfile',
+            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -89,9 +89,7 @@ export default class AccountProfile extends React.Component {
             success: function (res) {
                 let newValues= null;
                 if (res.data) {
-                   // console.log("resData", res.data);
                     this.updateWithoutSave(res.data)
-                   // console.log("State Data",this.state.profileData);
                     this.setState({isloaded:true});
                     
                 }
@@ -105,25 +103,19 @@ export default class AccountProfile extends React.Component {
     }
 
     updateWithoutSave(newValues) {
-        console.log("updateWithoutSave",newValues);
         let newProfile = Object.assign({}, this.state.profileData, newValues)
         this.setState({
             profileData: newProfile
         })
-        console.log("updateWithoutSave AFTER:");
     }
 
  
     updateAndSaveData(newValues) {
         
         let newProfile = Object.assign({}, this.state.profileData, newValues)
-        console.log("updateandSave Before:");
-        console.log(newProfile);
         this.setState({
             profileData: newProfile
         }, this.saveProfile)
-        console.log("updateandSave after:");
-        console.log(this.state.profileData);
     }
 
     updateForComponentId(componentId, newValues) {
@@ -131,11 +123,9 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
-        console.log("Save Profile");
-        console.log(JSON.stringify(this.state.profileData))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/updateTalentProfile',
+            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -143,7 +133,6 @@ export default class AccountProfile extends React.Component {
             type: "POST",
             data: JSON.stringify(this.state.profileData),
             success: function (res) {
-                console.log(res)
                 if (res.success == true) {
                     TalentUtil.notification.show("Profile updated sucessfully", "success", null, null)
                 } else {
@@ -166,9 +155,6 @@ export default class AccountProfile extends React.Component {
              email: this.state.profileData.email,
              phone: this.state.profileData.phone
          }
-
-console.log("Is loaded flag before if",this.state.isloaded);
-console.log('Current status',this.state.profileData.jobSeekingStatus);
    if(this.state.isloaded)   
    {
    return(
@@ -293,7 +279,7 @@ console.log('Current status',this.state.profileData.jobSeekingStatus);
                                                 <PhotoUpload
                                                 imageId={this.state.profileData.profilePhotoUrl}
                                                 updateProfileData={this.updateWithoutSave}
-                                                savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
+                                                savePhotoUrl='https://standardtaskprofile.azurewebsites.net/profile/profile/updateProfilePhoto'
                                             />
                                                   
                                          </FormItemWrapper>

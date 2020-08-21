@@ -31,7 +31,7 @@ export default class SelfIntroduction extends Component {
             summary: this.props.summary,
             description: this.props.description
         }
-        console.log(data)
+        //console.log(data)
         this.props.updateProfileData(data)
     }
 

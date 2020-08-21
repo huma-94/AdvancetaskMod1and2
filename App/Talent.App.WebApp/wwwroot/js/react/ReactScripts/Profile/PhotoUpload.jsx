@@ -86,14 +86,14 @@ export default class PhotoUpload extends Component {
    
     updateDisplayedPhoto(event) {
         event.preventDefault();
+        this.uploadPhoto();
         this.setState({
             edited: false
         });
     }
 
     uploadPhoto(event) {
-        event.preventDefault();
-
+        //event.preventDefault();
         var formData = new FormData();
         formData.append('file', $('#profilePhoto')[0].files[0]);
 
@@ -114,6 +114,7 @@ export default class PhotoUpload extends Component {
                 } else {
                     TalentUtil.notification.show("Profile did not upload successfully", "error", null, null)
                 }
+                
 
                 this.setState({
                     edited: false

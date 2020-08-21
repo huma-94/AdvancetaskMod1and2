@@ -30,7 +30,7 @@ export default class CompanyProfile extends React.Component {
     loadData() {
         let cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'http://localhost:60290/profile/profile/getEmployerProfile',
+            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getEmployerProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -38,7 +38,7 @@ export default class CompanyProfile extends React.Component {
             type: "GET",
             success: function (res) {
                
-                console.log(res);
+              //  console.log(res);
                 this.updateWithoutSaving(res.employer.companyContact);
               
                

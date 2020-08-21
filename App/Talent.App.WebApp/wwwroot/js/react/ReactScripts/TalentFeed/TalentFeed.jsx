@@ -43,14 +43,14 @@ export default class TalentFeed extends React.Component {
     };
 
     updateWithoutSave(newData) {
-        console.log(newData);
+       // console.log(newData);
         this.setState({
             feedData:newData
         })
     }
 
     loadData() {
-        let url = 'http://localhost:60290/profile/profile/getTalent'; 
+        let url = 'https://standardtaskprofile.azurewebsites.net/profile/profile/getTalent'; 
         let cookies = Cookies.get('talentAuthToken');
 
         $.ajax({

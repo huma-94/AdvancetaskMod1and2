@@ -20,7 +20,7 @@ export default class TalentDetail extends React.Component {
        
         let video = this.state.video;
         let user = this.props.user;
-        console.log(user);
+        //console.log(user);
 
         let currentEmployment = user.currentEmployment ? user.currentEmployment: "ABC,Developer"
         //user.currentEmployment;
@@ -31,7 +31,7 @@ export default class TalentDetail extends React.Component {
 
         let visaStatus = user.visa ? user.visa : "";
 
-        let server = 'http://localhost:60290/profile/profile/updateProfilePhoto';
+        let server = 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateProfilePhoto';
         let n = server.search("/profile");
         let url = server.slice(0, n);
         let imageId = user.photoId ? url + user.photoId : "http://semantic-ui.com/images/avatar/large/ade.jpg";
