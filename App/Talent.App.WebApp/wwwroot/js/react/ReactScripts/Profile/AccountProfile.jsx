@@ -80,7 +80,7 @@ export default class AccountProfile extends React.Component {
     loadData() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getTalentProfile',
+            url: 'http://localhost:60290/profile/profile/getTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -95,7 +95,8 @@ export default class AccountProfile extends React.Component {
                 }
             }.bind(this),
             error: function (res) {
-                reject(error)
+               // console.log(res)
+            
             }
         })
         
@@ -123,9 +124,10 @@ export default class AccountProfile extends React.Component {
     }
 
     saveProfile() {
+        console.log("in the save profile method");
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateTalentProfile',
+            url: 'http://localhost:60290/profile/profile/updateTalentProfile',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -278,8 +280,9 @@ export default class AccountProfile extends React.Component {
                                                 
                                                 <PhotoUpload
                                                 imageId={this.state.profileData.profilePhotoUrl}
-                                                updateProfileData={this.updateWithoutSave}
-                                                savePhotoUrl='https://standardtaskprofile.azurewebsites.net/profile/profile/updateProfilePhoto'
+                                                updateProfileData={this.updateAndSaveData}
+                                                saveProfileData={this.updateAndSaveData}
+                                                savePhotoUrl='http://localhost:60290/profile/profile/updateProfilePhoto'
                                             />
                                                   
                                          </FormItemWrapper>

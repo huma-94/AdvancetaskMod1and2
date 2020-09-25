@@ -50,7 +50,7 @@ export default class TalentFeed extends React.Component {
     }
 
     loadData() {
-        let url = 'https://standardtaskprofile.azurewebsites.net/profile/profile/getTalent'; 
+        let url = 'http://localhost:60290/profile/profile/getTalent'; 
         let cookies = Cookies.get('talentAuthToken');
 
         $.ajax({

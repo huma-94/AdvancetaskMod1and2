@@ -52,7 +52,7 @@ export default class Experience extends React.Component {
             
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getSkill',
+            url: 'http://localhost:60290/profile/profile/getSkill',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -111,7 +111,7 @@ export default class Experience extends React.Component {
        // console.log(JSON.stringify(this.state.skill))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/addSkill',
+            url: 'http://localhost:60290/profile/profile/addSkill',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -143,7 +143,7 @@ export default class Experience extends React.Component {
        // console.log(JSON.stringify(this.state.skill))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/deleteSkill',
+            url: 'http://localhost:60290/profile/profile/deleteSkill',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -182,7 +182,7 @@ export default class Experience extends React.Component {
         //console.log(JSON.stringify(this.state.skill))
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/UpdateSkill',
+            url: 'http://localhost:60290/profile/profile/UpdateSkill',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'

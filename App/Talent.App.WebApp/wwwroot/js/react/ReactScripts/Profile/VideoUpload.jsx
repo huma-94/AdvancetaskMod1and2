@@ -30,7 +30,7 @@ export default class VideoUpload extends React.Component {
         var cookies = Cookies.get('talentAuthToken');
         console.log(this.state.videoName)
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getProfileVideo?Id=' + this.state.videoName,
+            url: 'http://localhost:60290/profile/profile/getProfileVideo?Id=' + this.state.videoName,
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export default class VideoUpload extends React.Component {
         data.append('file', this.state.fileInstance);
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateTalentVideo',
+            url: 'http://localhost:60290/profile/profile/updateTalentVideo',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
 

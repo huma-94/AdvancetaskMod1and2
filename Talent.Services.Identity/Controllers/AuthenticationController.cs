@@ -24,7 +24,7 @@ namespace Talent.Services.Identity.Controllers
         private readonly IBusClient _busClient;
         private readonly IAuthenticationService _authenticationService;
         private readonly IUserAppContext _userAppContext;
-        public AuthenticationController(
+            public AuthenticationController(
               IBusClient busClient,
               IAuthenticationService authenticationService,
               IUserAppContext userAppContext)

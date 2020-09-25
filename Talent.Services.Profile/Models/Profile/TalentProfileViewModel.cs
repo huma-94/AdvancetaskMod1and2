@@ -23,6 +23,8 @@ namespace Talent.Services.Profile.Models.Profile
         public Address Address { get; set; }
         public string Nationality { get; set; }
         public string VisaStatus { get; set; }
+        
+        public string status { get; set; }
         public DateTime? VisaExpiryDate { get; set; } 
         public string ProfilePhoto { get; set; }
         public string ProfilePhotoUrl { get; set; }

@@ -60,7 +60,7 @@ export default class Language extends React.Component {
 
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getLanguage',
+            url: 'http://localhost:60290/profile/profile/getLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -128,7 +128,7 @@ export default class Language extends React.Component {
     addLanguages() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/addLanguage',
+            url: 'http://localhost:60290/profile/profile/addLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -165,7 +165,7 @@ export default class Language extends React.Component {
        
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/deleteLanguage',
+            url: 'http://localhost:60290/profile/profile/deleteLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -207,7 +207,7 @@ export default class Language extends React.Component {
      
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateLanguage',
+            url: 'http://localhost:60290/profile/profile/updateLanguage',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'

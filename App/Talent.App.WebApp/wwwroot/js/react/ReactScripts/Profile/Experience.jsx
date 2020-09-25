@@ -45,7 +45,7 @@ export default class Experience extends React.Component {
     loadExperience() {
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/getExperience',
+            url: 'http://localhost:60290/profile/profile/getExperience',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ export default class Experience extends React.Component {
         else {
             var cookies = Cookies.get('talentAuthToken');
             $.ajax({
-                url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/addExperience',
+                url: 'http://localhost:60290/profile/profile/addExperience',
                 headers: {
                     'Authorization': 'Bearer ' + cookies,
                     'Content-Type': 'application/json'
@@ -138,7 +138,7 @@ export default class Experience extends React.Component {
         var result = Object.assign({}, experiences[index], data);
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/updateExperience',
+            url: 'http://localhost:60290/profile/profile/updateExperience',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'
@@ -165,7 +165,7 @@ export default class Experience extends React.Component {
         const data = this.state.experiences.find(x => x.id == id);
         var cookies = Cookies.get('talentAuthToken');
         $.ajax({
-            url: 'https://standardtaskprofile.azurewebsites.net/profile/profile/deleteExperience',
+            url: 'http://localhost:60290/profile/profile/deleteExperience',
             headers: {
                 'Authorization': 'Bearer ' + cookies,
                 'Content-Type': 'application/json'

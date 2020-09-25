@@ -436,6 +436,18 @@ namespace Talent.Services.Profile.Controllers
         [HttpPost("updateProfilePhoto")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> UpdateProfilePhoto()
+        //{
+        //    //Your code here;
+        //    string returnValue =" ";
+        //    string id = _userAppContext.CurrentUserId;
+        //    IFormFile file = Request.Form.Files[0];
+        //    if (file != null)
+        //    {
+        //        Console.WriteLine("here is the file name " + file.FileName);
+        //        returnValue = Convert.ToString(await _profileService.UpdateTalentPhoto(id, file));
+        //    }
+        //    return Json(new { Success = returnValue });
+        //}
         {
             //Your code here;
             var returnValue = false;
@@ -448,7 +460,6 @@ namespace Talent.Services.Profile.Controllers
             }
             return Json(new { Success = returnValue });
         }
-
         [HttpPost("updateTalentCV")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "talent")]
         public async Task<ActionResult> UpdateTalentCV()
